@@ -138,7 +138,7 @@ def find_k_best_moves(U, i, M, frame_array):
             for d_theta in np.linspace(-pi/10, pi/10, 21):
                 for dh in np.linspace(0,3,4):
 
-                    bacterium_copy = deepcopy(bacterium)
+                    bacterium_copy = bacterium.duplicate()
 
                     bacterium_copy.pos += np.array([x,y,0])
                     bacterium_copy.theta += d_theta
@@ -156,7 +156,7 @@ def find_k_best_moves(U, i, M, frame_array):
     # splitting
     to_insert = []
     for c,x,y,d_theta,dh in k_best_moves:
-        bacterium_copy = deepcopy(bacterium)
+        bacterium_copy = bacterium.duplicate()
 
         bacterium_copy.pos += np.array([x,y,0])
         bacterium_copy.theta += d_theta
@@ -164,7 +164,7 @@ def find_k_best_moves(U, i, M, frame_array):
         bacterium_copy.update()
         if bacterium_copy.length > 31:
             for split_ratio in np.linspace(0.25,0.75,20):
-                bacterium_copy_2 = deepcopy(bacterium_copy)
+                bacterium_copy_2 = bacterium_copy.duplicate()
 
                 new_bacterium = split(bacterium_copy_2, split_ratio)
                 if bacterium_copy_2.length < 13 or new_bacterium.length < 13:
@@ -484,27 +484,11 @@ def collision_matrix(U):
                 M[i][j] = True
 
     return M
-        
-  
-
-# deep copy function
-#   returns a copy of a bacterium
-def deepcopy(bacterium):
-    new_bacterium = Bacterium()
-    new_bacterium.pos = np.array(bacterium.pos)
-    new_bacterium.theta = bacterium.theta
-    new_bacterium.length = bacterium.length
-    new_bacterium.bending = bacterium.bending
-    new_bacterium.bend_ratio = bacterium.bend_ratio
-    new_bacterium.bend_angle = bacterium.bend_angle
-    new_bacterium.name = bacterium.name
-    new_bacterium.update()
-    return new_bacterium
 
 def deepcopy_list(U):
     U_copy = []
     for bacterium in U:
-        U_copy.append(deepcopy(bacterium))
+        U_copy.append(bacterium.duplicate())
 
     return U_copy
 
@@ -589,5 +573,4 @@ def split(bacterium, split_ratio):
     new_bacterium.update()
 
     return new_bacterium
-
 

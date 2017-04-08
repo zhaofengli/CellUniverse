@@ -55,6 +55,8 @@ class Bacterium:
         self.m = 1
        
     def update(self):
+        """Update bacterium hitbox position, rotation, and length."""
+
         length = self.length
         pos = self.pos
         theta = self.theta
@@ -131,5 +133,18 @@ class Bacterium:
             self.tail_box = (int(x - radius), int(y - radius), int(x + radius), int(y + radius))
             self.tail_start_angle = int(findStartAngle(x, y, self.end_point_4[0], self.end_point_4[1]))
 
+    def duplicate(self):
+        """Create a duplicate of the bacterium, excluding collision flag."""
 
+        new_bacterium = Bacterium()
+        new_bacterium.pos = np.array(self.pos)
+        new_bacterium.theta = self.theta
+        new_bacterium.length = self.length
+        new_bacterium.bending = self.bending
+        new_bacterium.bend_ratio = self.bend_ratio
+        new_bacterium.bend_angle = self.bend_angle
+        new_bacterium.name = self.name
+        new_bacterium.update()
+
+        return new_bacterium
 
