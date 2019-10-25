@@ -285,6 +285,12 @@ def optimize_core(imagefile, colony, args, config):
     end_temperature = args.endtemp
     alpha = (end_temperature/temperature)**(1/run_count)
 
+    pbadlength = 1000
+    pbad = [0] * pbadlength
+    pbadtotal = 0
+    pbadpos = 0
+    pbadsum = 0
+
     for i in range(run_count):
         # print progress for debugging purposes
         #if i%1013 == 59:
@@ -388,6 +394,19 @@ def optimize_core(imagefile, colony, args, config):
             else:
                 acceptance = np.exp(-costdiff/temperature)
 
+            # record pbad
+            if costdiff > 0:
+                pbadnext = 0 if pbadpos == pbadlength - 1 else pbadpos + 1
+
+                if pbadtotal == pbadlength:
+                    pbadsum -= pbad[pbadnext]
+                else:
+                    pbadtotal += 1
+
+                pbadpos = pbadnext
+                pbad[pbadnext] = acceptance
+                pbadsum += acceptance
+
             # check if the acceptance threshold was met; pop if not
             if acceptance <= random.random():
                 # restore the previous cells
@@ -408,6 +427,9 @@ def optimize_core(imagefile, colony, args, config):
 
             colony.flatten()
             cellnodes = list(colony)
+
+            if i % 80 == 0 and pbadtotal > 0:
+                print('pbad: {}'.format(sum(pbad) / pbadtotal))
 
             # DEBUG
             if False and args.debug and i%80 == 0:
